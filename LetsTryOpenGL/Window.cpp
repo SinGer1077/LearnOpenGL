@@ -96,6 +96,54 @@ int main()
 		std::cout << "ERROR::SHADER::FRAGMENT::COMPILATION FAILED\n" << infoLog << std::endl;
 	}
 
+	// создание шейдерной программы
+	GLuint shaderProgram;
+	shaderProgram = glCreateProgram();
+	glAttachShader(shaderProgram, vertexShader); // присоединяем к программе вершинный шейдер
+	glAttachShader(shaderProgram, fragmentShader); // присоденияем к программе фрагментный шейдер
+	glLinkProgram(shaderProgram); // связываем шейдеры
+	// проверка успешности связывания
+	glGetProgramiv(shaderProgram, GL_LINK_STATUS, &success);
+	if (!success)
+	{
+		glGetProgramInfoLog(shaderProgram, 512, NULL, infoLog);
+		std::cout << "ERROR::PROGRAM::LINK::LINKED FAILED\n" << infoLog << std::endl;
+	}
+	glDeleteShader(vertexShader); // удаляем шейдеры, они нам больше не нужны после связывания
+	glDeleteShader(fragmentShader);
+
+	//представляем 3 3д вершины для отрисовки треугольника
+	GLfloat vertices[] = {
+		-0.5f, -0.5f, 0.0f,
+		0.5f, -0.5f, 0.0f,
+		0.0f, 0.5f, 0.0f
+	};
+	GLuint VBO; // объект вершинного буфера для отправки данных в GPU
+	glGenBuffers(1, &VBO);
+	glBindBuffer(GL_ARRAY_BUFFER, VBO); // привязка типа буфера
+	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW); // копирование вершинных данных в буфер
+	//1. тип буфера, на который скидываем данные, 2. размер данных в байтах. 3. сами данные, 4.способ работы видюхи с данными
+	// GL_STATIC_DRAW - данные либо никогда не меняются, либо меняются редко
+	// GL_DYNAMIC_DRAW - данные меняются часто
+	// GL_STREAM_DRAW - данные меняются при каждой отрисовке
+
+	GLuint VAO; // объект вершинного массива
+	glGenVertexArrays(1, &VAO);
+	glBindVertexArray(VAO); // использование VAO
+
+	// показываем openlg, как интерпретировать вершинные данные
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (GLvoid*)0);
+	// первая позиция - какой аргумент хотим настроить (в нашем случае position, которую указали через layout (location=0)
+	// размер аргумента в шейдере (был vec3, указываем 3)
+	// тип данных
+	// необходимо нормализовать входные данные?
+	// расстояние между наборами данных 
+	// смещение начала данных в буфере (у нас не имеет)
+	glEnableVertexAttribArray(0); // включаем атрибут
+	glBindVertexArray(0); // отвязываем VAO
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	
+		
 
 	//создаем игровой цикл, отрисовываем пока не прикажем GLFW остановиться
 	while (!glfwWindowShouldClose(window)) //получили ли инструкцию к закрытию
@@ -106,21 +154,13 @@ int main()
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0); // устанавливаем цвет, которым очищен буфер
 		glClear(GL_COLOR_BUFFER_BIT); //glClear - очищаем буфер. Указываем бит, чтобы указать какой буфер нужно очистить
 		
-		//представляем 3 3д вершины для отрисовки треугольника
-		GLfloat vertices[] = {
-			-0.5f, -0.5f, 0.0f,
-			0.5f, -0.5f, 0.0f,
-			0.0f, 0.5f, 0.0f
-		};
-		GLuint VBO; // объект вершинного буфера для отправки данных в GPU
-		glGenBuffers(1, &VBO);
-		glBindBuffer(GL_ARRAY_BUFFER, VBO); // привязка типа буфера
-		glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW); // копирование вершинных данных в буфер
-		//1. тип буфера, на который скидываем данные, 2. размер данных в байтах. 3. сами данные, 4.способ работы видюхи с данными
-		// GL_STATIC_DRAW - данные либо никогда не меняются, либо меняются редко
-		// GL_DYNAMIC_DRAW - данные меняются часто
-		// GL_STREAM_DRAW - данные меняются при каждой отрисовке
+		glUseProgram(shaderProgram); // использование программы
+		glBindVertexArray(VAO); // снова привязываем VAO
 
+		glDrawArrays(GL_TRIANGLES, 0, 3);
+
+		glBindVertexArray(0); // отвязываем до след использования
+			
 		glfwSwapBuffers(window); // замена цветового буфера в соответствии с операцией
 		
 	}
