@@ -16,7 +16,7 @@ const GLchar* fragmentShaderSource = "#version 330 core\n"
 "out vec4 color;\n" // указание выходных данных (цвет формате RGBA)
 "void main()\n"
 "{\n"
-"color = vec4(1.0f, 0.5f, 0.2f, 1.0f);\n" // задание цвета
+"color = vec4(1.0f, 0.0f, 0.3f, 1.0f);\n" // задание цвета
 "}\0";
 
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode)
@@ -113,10 +113,16 @@ int main()
 	glDeleteShader(fragmentShader);
 
 	//представляем 3 3д вершины для отрисовки треугольника
-	GLfloat vertices[] = {
-		-0.5f, -0.5f, 0.0f,
+	//GLfloat vertices[] = {
+	//	-0.5f, -0.5f, 0.0f,
+	//	0.5f, -0.5f, 0.0f,
+	//	0.0f, 0.5f, 0.0f
+	//};
+	GLfloat vertices[] = { // углы прямоугольника
+		0.5f, 0.5f, 0.0f,
 		0.5f, -0.5f, 0.0f,
-		0.0f, 0.5f, 0.0f
+		-0.5f, -0.5f, 0.0f,
+		-0.5f, 0.5f, 0.0f
 	};
 	GLuint VBO; // объект вершинного буфера для отправки данных в GPU
 	glGenBuffers(1, &VBO);
@@ -139,11 +145,28 @@ int main()
 	// необходимо нормализовать входные данные?
 	// расстояние между наборами данных 
 	// смещение начала данных в буфере (у нас не имеет)
+	GLuint indices[] = { // индексы углов
+		0,1,3, // первый треугольник
+		1,2,3 // второй треугольник
+	};
+	GLuint EBO;
+	glGenBuffers(1, &EBO);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+	
 	glEnableVertexAttribArray(0); // включаем атрибут
 	glBindVertexArray(0); // отвязываем VAO
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	
-		
+	//используем EBO, рисуем прямоугольник
+	//GLfloat vertices[] = { // углы прямоугольника
+	//	0.5f, 0.5f, 0.0f,
+	//	0.5f, -0.5f, 0.0f,
+	//	-0.5f, -0.5f, 0.0f,
+	//	-0.5f, 0.5f, 0.0f
+	//};
+	
+	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
 	//создаем игровой цикл, отрисовываем пока не прикажем GLFW остановиться
 	while (!glfwWindowShouldClose(window)) //получили ли инструкцию к закрытию
@@ -155,9 +178,12 @@ int main()
 		glClear(GL_COLOR_BUFFER_BIT); //glClear - очищаем буфер. Указываем бит, чтобы указать какой буфер нужно очистить
 		
 		glUseProgram(shaderProgram); // использование программы
+		
 		glBindVertexArray(VAO); // снова привязываем VAO
+		//glDrawArrays(GL_TRIANGLES, 0, 3);
 
-		glDrawArrays(GL_TRIANGLES, 0, 3);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
 		glBindVertexArray(0); // отвязываем до след использования
 			
