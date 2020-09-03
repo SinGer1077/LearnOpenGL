@@ -1,0 +1,138 @@
+#define GLEW_STATIC // подключаем glew как статическую библиотеку 
+#include <glew.h> // подключаем glew
+#include <glfw3.h> // подключаем glfw
+#include <iostream>
+
+// вершинный шейдер на языке GLSL
+const GLchar* vertexShaderSource = "#version 330 core\n" // указание версии шейдера + profie
+"layout (location=0) in vec3 position;\n" //указание входных данных с помощью in (vec3), позиция переменной через layout
+"void main()\n"
+"{\n"
+	"gl_Position = vec4(position.x, position.y, position.z, 1.0f);\n" // результат работы шейдера, нужно преобразовать vec3 в vec4
+"}\0";
+
+// фрагментный шейдер
+const GLchar* fragmentShaderSource = "#version 330 core\n"
+"out vec4 color;\n" // указание выходных данных (цвет формате RGBA)
+"void main()\n"
+"{\n"
+"color = vec4(1.0f, 0.5f, 0.2f, 1.0f);\n" // задание цвета
+"}\0";
+
+void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode)
+{ // указатель на окно, нажатая клавиша, действие над клавишей, число описывающее модификаторы (shift, control, alt, super)
+	// Когда пользователь нажимает ESC, мы устанавливаем свойство windowShouldClose в true,
+	//  и приложение закроется
+	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
+		glfwSetWindowShouldClose(window, GL_TRUE);
+}
+
+int main()
+{
+	//инициализация GLFW
+	glfwInit();
+	// найстройка GLFW
+	// задается минимальная требуемая версия opengl
+	// мажорная
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+	// минорная
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+	// установка профайла для которого создается контекст
+	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+	// выключение возможности изменения размера окна
+	glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
+
+	// создаем объект окна
+	GLFWwindow* window = glfwCreateWindow(800, 800, "LearnOpenGL", nullptr, nullptr);
+	if (window == nullptr)
+	{
+		std::cout << "Failed to create GLFW window" << std::endl;
+		glfwTerminate();
+		return -1;
+	}
+	glfwMakeContextCurrent(window);
+
+	//инициализация GLEW 
+	glewExperimental = GL_TRUE; //использование новейших техник для управления функционалом opengl, без нее могут быть проблемы с core-profile
+	if (glewInit() != GLEW_OK) 
+	{
+		std::cout << "Failed to initialize GLEW" << std::endl;
+		return -1;
+	}
+
+	// устанавливаем размеры отрисовываемого окна
+	int width, height;
+	glfwGetFramebufferSize(window, &width, &height);
+	glViewport(0, 0, width, height);
+
+	glfwSetKeyCallback(window, key_callback); // вызов закрытия на ESC
+
+	//сборка шейдера вершин
+	GLuint vertexShader; // доступ к объектам - через идентификатор, поэтому uint
+	vertexShader = glCreateShader(GL_VERTEX_SHADER); // тип создаваемого шейдера
+	// привязываем исходный код шейдера к созданному шейдеру и компилируем
+	glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
+	glCompileShader(vertexShader);
+	//проверка успешности сборки шейдера
+	GLint success; // число для определения успешности сборки
+	GLchar infoLog[512]; // контейнер для хранения ошибок (если появились)
+	glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success); // проверка успешности
+	if (!success) 
+	{
+		glGetShaderInfoLog(vertexShader, 512, NULL, infoLog); // если будет ошибка, мы ее выведем
+		std::cout << "ERROR::SHADER::VERTEX::COMPILATION FAILED\n" << infoLog << std::endl;
+	}
+
+	// сборка фрагментного шейдера
+	GLuint fragmentShader;
+	fragmentShader = glCreateShader(GL_FRAGMENT_SHADER); // тип создаваемого шейдера
+	glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
+	glCompileShader(fragmentShader);
+	//проверка успешности сборки шейдера	
+	glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &success); // проверка успешности
+	if (!success)
+	{
+		glGetShaderInfoLog(fragmentShader, 512, NULL, infoLog); // если будет ошибка, мы ее выведем
+		std::cout << "ERROR::SHADER::FRAGMENT::COMPILATION FAILED\n" << infoLog << std::endl;
+	}
+
+
+	//создаем игровой цикл, отрисовываем пока не прикажем GLFW остановиться
+	while (!glfwWindowShouldClose(window)) //получили ли инструкцию к закрытию
+	{
+		glfwPollEvents(); // были ли вызваны какие-либо события
+
+		// командф отрисовки здесь
+		glClearColor(0.2f, 0.3f, 0.3f, 1.0); // устанавливаем цвет, которым очищен буфер
+		glClear(GL_COLOR_BUFFER_BIT); //glClear - очищаем буфер. Указываем бит, чтобы указать какой буфер нужно очистить
+		
+		//представляем 3 3д вершины для отрисовки треугольника
+		GLfloat vertices[] = {
+			-0.5f, -0.5f, 0.0f,
+			0.5f, -0.5f, 0.0f,
+			0.0f, 0.5f, 0.0f
+		};
+		GLuint VBO; // объект вершинного буфера для отправки данных в GPU
+		glGenBuffers(1, &VBO);
+		glBindBuffer(GL_ARRAY_BUFFER, VBO); // привязка типа буфера
+		glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW); // копирование вершинных данных в буфер
+		//1. тип буфера, на который скидываем данные, 2. размер данных в байтах. 3. сами данные, 4.способ работы видюхи с данными
+		// GL_STATIC_DRAW - данные либо никогда не меняются, либо меняются редко
+		// GL_DYNAMIC_DRAW - данные меняются часто
+		// GL_STREAM_DRAW - данные меняются при каждой отрисовке
+
+		glfwSwapBuffers(window); // замена цветового буфера в соответствии с операцией
+		
+	}
+
+	
+
+
+
+
+	// вышли из игрового цикла, нужно очистить данные
+	glfwTerminate();
+	return 0;
+	
+}
+
