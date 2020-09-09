@@ -3,6 +3,8 @@
 #include <glew.h>
 #include <glfw3.h>
 #include <iostream>
+#include <chrono>
+#include <cmath>
 
 void key_callback_escape(GLFWwindow* window, int key, int scancode, int action, int mode) {
 	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
@@ -20,12 +22,13 @@ const GLchar* fragmentShaderSource = "#version 330 core\n"
 "color = vec4(0.9f, 0.0f, 0.7f, 1.0f);}\n";
 
 const GLchar* fragmentShaderSourceYellow = "#version 330 core\n"
+"uniform vec3 uniformColor;"
 "out vec4 color;\n"
 "void main(){\n"
-"color = vec4(0.3f, 0.8f, 0.0f, 1.0f);}\0";
+"color = vec4(uniformColor, 1.0f);}\0";
 
 int main() {
-
+	
 	glfwInit();
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
@@ -107,6 +110,7 @@ int main() {
 		glGetProgramInfoLog(shaderProgramYellow, 512, NULL, infoLog);
 		std::cout << "ERROR::PROGRAM::LINK::LINKED FAILED\n" << infoLog << std::endl;
 	}
+	GLint uniColor = glGetUniformLocation(shaderProgramYellow, "uniformColor");
 	glDeleteShader(fragmentShaderYellow);
 	glDeleteShader(vertexShader);
 
@@ -140,8 +144,13 @@ int main() {
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (GLvoid*)0);
 	glEnableVertexAttribArray(0);
 	glBindVertexArray(0);	
-
+	auto t_start = std::chrono::high_resolution_clock::now();
 	while (!glfwWindowShouldClose(window)) {
+		
+		auto t_now = std::chrono::high_resolution_clock::now();
+		float time = std::chrono::duration_cast<std::chrono::duration<float>>(t_now - t_start).count();
+		glUniform3f(uniColor, 0.3f, 0.0f, (sin(time * 2.0f) + 1.0f) / 2.0f);
+
 		glfwPollEvents();
 		glClearColor(0.7f, 0.0f, 0.9f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
@@ -149,8 +158,10 @@ int main() {
 		glUseProgram(shaderProgram);
 		glBindVertexArray(VAO[0]);
 		//glBindBuffer(GL_ARRAY_BUFFER, VBO_1);
-		glDrawArrays(GL_TRIANGLES, 0, 3);
+		glDrawArrays(GL_TRIANGLES, 0, 3);		
 		glUseProgram(shaderProgramYellow);
+		
+		
 		glBindVertexArray(VAO[1]);
 		//glBindBuffer(GL_ARRAY_BUFFER, VBO_2);		
 		glDrawArrays(GL_TRIANGLES, 0, 3);
