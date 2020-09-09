@@ -4,7 +4,7 @@
 #include <iostream>
 
 // вершинный шейдер на языке GLSL
-const GLchar* vertexShaderSource = "#version 330 core\n" // указание версии шейдера + profie
+const GLchar* vertexShaderSource1 = "#version 330 core\n" // указание версии шейдера + profie
 "layout (location=0) in vec3 position;\n" //указание входных данных с помощью in (vec3), позиция переменной через layout
 "void main()\n"
 "{\n"
@@ -12,7 +12,7 @@ const GLchar* vertexShaderSource = "#version 330 core\n" // указание версии шейд
 "}\0";
 
 // фрагментный шейдер
-const GLchar* fragmentShaderSource = "#version 330 core\n"
+const GLchar* fragmentShaderSource1 = "#version 330 core\n"
 "out vec4 color;\n" // указание выходных данных (цвет формате RGBA)
 "void main()\n"
 "{\n"
@@ -27,7 +27,7 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 		glfwSetWindowShouldClose(window, GL_TRUE);
 }
 
-int main()
+int main_first()
 {
 	//инициализация GLFW
 	glfwInit();
@@ -71,7 +71,7 @@ int main()
 	GLuint vertexShader; // доступ к объектам - через идентификатор, поэтому uint
 	vertexShader = glCreateShader(GL_VERTEX_SHADER); // тип создаваемого шейдера
 	// привязываем исходный код шейдера к созданному шейдеру и компилируем
-	glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
+	glShaderSource(vertexShader, 1, &vertexShaderSource1, NULL);
 	glCompileShader(vertexShader);
 	//проверка успешности сборки шейдера
 	GLint success; // число для определения успешности сборки
@@ -86,7 +86,7 @@ int main()
 	// сборка фрагментного шейдера
 	GLuint fragmentShader;
 	fragmentShader = glCreateShader(GL_FRAGMENT_SHADER); // тип создаваемого шейдера
-	glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
+	glShaderSource(fragmentShader, 1, &fragmentShaderSource1, NULL);
 	glCompileShader(fragmentShader);
 	//проверка успешности сборки шейдера	
 	glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &success); // проверка успешности
