@@ -35,5 +35,26 @@ public:
 		"out vec4 outColor;\n"
 		"void main(){\n"
 		"outColor = vec4(Color, 1.0);}\0";
+
+
+
+
+	const GLchar* vertexShaderLecture = "#version 330 core\n"
+		"layout (location=0) in vec3 position;\n"		
+		"void main(){\n"
+		"gl_Position = vec4(position, 1.0);\n"
+		"}\0";
+
+	const GLchar* fragmentShaderLecture = "#version 330 core\n"
+		"in vec4 vertexColor;\n"
+		"out vec4 color;\n"
+		"void main(){\n"
+		"color = vertexColor;}\0";
+	
+	const GLchar* fragmentTestUniformShader = "#version 330 core\n"
+		"out vec4 color;\n"
+		"uniform vec4 outColor;\n"
+		"void main(){\n"
+		"color = outColor;}\0";
 };
 
