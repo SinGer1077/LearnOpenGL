@@ -40,7 +40,7 @@ int main()
 
 	Shaders shaders;
 	GLuint vertexShader;
-	CompileVertexShader(&vertexShader, shaders.gradientVertexShader);
+	CompileVertexShader(&vertexShader, shaders.gradientVertexRotateShader);
 	CheckSuccessfulShaderCompilation(&vertexShader, "vertexShader");
 
 	GLuint fragmentShader;
@@ -77,9 +77,17 @@ int main()
 		GLfloat greenValue = (sin(timeValue) / 2) + 0.1; //как будем менять зеленый цвет в зависимости от времени
 		GLfloat redValue = (sin(timeValue) / 2) + 0.1;
 		GLfloat blueValue = (sin(timeValue) / 2) + 0.1;
+
+		GLfloat rotationSin = (sin(timeValue)/2);
+		GLfloat rotationCos = (cos(timeValue)/2);
+
 		GLint vertexColorLocation = glGetUniformLocation(shaderProgram, "flexColor"); //куда передаем (?)
+		GLint vertexPositionLocationRotate = glGetUniformLocation(shaderProgram, "rotation");
+		GLint vertexPositionLocationTransfer = glGetUniformLocation(shaderProgram, "transfer");
 		glUseProgram(shaderProgram);
 		glUniform3f(vertexColorLocation, redValue, greenValue, blueValue);
+		glUniform2f(vertexPositionLocationRotate, rotationSin, rotationCos);
+		glUniform2f(vertexPositionLocationTransfer, rotationSin, rotationCos);
 
 		glBindVertexArray(VAO);
 		glDrawArrays(GL_TRIANGLES, 0, 3);

@@ -72,19 +72,18 @@ public:
 		"out vec4 color;\n"		
 		"void main(){\n"		
 		"color = vec4(ourColor.x-flexColor.x, ourColor.y+flexColor.y, ourColor.z-flexColor.z,1.0f);}\0";
+	
 
-
-	const GLchar* gradientUniformVertexShader = "#version 330 core\n"
+	const GLchar* gradientVertexRotateShader = "#version 330 core\n"
+		"#extension GL_ARB_explicit_uniform_location : require\n"
 		"layout (location = 0) in vec3 position;\n"
 		"layout (location = 1) in vec3 color;\n"
+		"uniform vec2 rotation;\n"
+		"uniform vec2 transfer;\n"
 		"out vec3 ourColor;\n"
 		"void main(){\n"
-		"gl_Position = vec4(position, 1.0);\n"
+		"gl_Position = vec4(position.x*rotation.y - position.y*rotation.x + transfer.x, position.x*rotation.x + position.y*rotation.y + transfer.y, position.z, 1.0);\n"
 		"ourColor = color;}\0";
-	const GLchar* gradientUniformFragmentShader = "#version 330 core\n"		
-		"out vec4 color;\n"
-		"uniform vec3 flexColor;\n"
-		"void main(){\n"		
-		"color = vec4(flexColor, 1.0f);}\0";
+	
 };
 
