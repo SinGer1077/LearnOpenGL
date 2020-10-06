@@ -78,16 +78,19 @@ int main()
 		GLfloat redValue = (sin(timeValue) / 2) + 0.1;
 		GLfloat blueValue = (sin(timeValue) / 2) + 0.1;
 
-		GLfloat rotationSin = (sin(timeValue)/2);
-		GLfloat rotationCos = (cos(timeValue)/2);
+		GLfloat rotationSin = (sin(timeValue));
+		GLfloat rotationCos = (cos(timeValue));
+
+		GLfloat transferSin = (sin(timeValue) / 2);
+		GLfloat transferCos = (cos(timeValue) / 2);
 
 		GLint vertexColorLocation = glGetUniformLocation(shaderProgram, "flexColor"); //куда передаем (?)
 		GLint vertexPositionLocationRotate = glGetUniformLocation(shaderProgram, "rotation");
 		GLint vertexPositionLocationTransfer = glGetUniformLocation(shaderProgram, "transfer");
-		glUseProgram(shaderProgram);
+		glUseProgram(shaderProgram);		
 		glUniform3f(vertexColorLocation, redValue, greenValue, blueValue);
 		glUniform2f(vertexPositionLocationRotate, rotationSin, rotationCos);
-		glUniform2f(vertexPositionLocationTransfer, rotationSin, rotationCos);
+		glUniform2f(vertexPositionLocationTransfer, transferSin, transferCos);
 
 		glBindVertexArray(VAO);
 		glDrawArrays(GL_TRIANGLES, 0, 3);
