@@ -54,7 +54,7 @@ void CheckSuccessfulShaderCompilation(GLuint* shader, std::string shaderType) {
 	glGetShaderiv(*shader, GL_COMPILE_STATUS, &success);
 	if (!success) {
 		glGetShaderInfoLog(*shader, 512, NULL, infoLog);
-		std::cout << "Failed " << shaderType << " compiling" << std::endl;
+		std::cout << "ERROR::SHADER::"<<shaderType<<"::COMPILATION_FAILED\n" << infoLog << std::endl;
 	}
 }
 /// <summary>
@@ -100,4 +100,17 @@ void GenerationFigure(GLfloat verticesFirst[], int size_vertices, GLuint VAO, GL
 	glEnableVertexAttribArray(0);
 	glBindVertexArray(0);
 	//glBindBuffer(GL_ARRAY_BUFFER, 0);
+}
+void UpdateFigure(GLfloat verticesFirst[], int size_vertices, GLuint VAO, GLuint VBO) {
+	glBindVertexArray(VAO);
+	glBindBuffer(GL_ARRAY_BUFFER, VBO);
+	glBufferData(GL_ARRAY_BUFFER, size_vertices, verticesFirst, GL_STATIC_DRAW);
+	//std::cout << size_vertices << " " << verticesFirst;
+	//атрибут с координатами
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat), (GLvoid*)0);
+	glEnableVertexAttribArray(0);
+	//атрибут с цветом
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat), (GLvoid*)(3*sizeof(GLfloat)));
+	glEnableVertexAttribArray(1);
+	glBindVertexArray(0);
 }

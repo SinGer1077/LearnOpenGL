@@ -5,7 +5,7 @@
 
 class Shaders
 {
-public: 
+public:
 	const GLchar* vertexShaderSource = "#version 330 core\n"
 		"layout (location=0) in vec3 position;\n"
 		"void main() {\n"
@@ -40,7 +40,7 @@ public:
 
 
 	const GLchar* vertexShaderLecture = "#version 330 core\n"
-		"layout (location=0) in vec3 position;\n"		
+		"layout (location=0) in vec3 position;\n"
 		"void main(){\n"
 		"gl_Position = vec4(position, 1.0);\n"
 		"}\0";
@@ -50,11 +50,41 @@ public:
 		"out vec4 color;\n"
 		"void main(){\n"
 		"color = vertexColor;}\0";
-	
+
 	const GLchar* fragmentTestUniformShader = "#version 330 core\n"
 		"out vec4 color;\n"
 		"uniform vec4 outColor;\n"
 		"void main(){\n"
 		"color = outColor;}\0";
+
+
+	const GLchar* gradientVertexShader = "#version 330 core\n"
+		"#extension GL_ARB_explicit_uniform_location : require\n"
+		"layout (location = 0) in vec3 position;\n"
+		"layout (location = 1) in vec3 color;\n"		
+		"out vec3 ourColor;\n"
+		"void main(){\n"
+		"gl_Position = vec4(position, 1.0);\n"
+		"ourColor = color;}\0";
+	const GLchar* gradientFragmentShader = "#version 330 core\n"
+		"in vec3 ourColor;\n"
+		"uniform vec3 flexColor;\n"
+		"out vec4 color;\n"		
+		"void main(){\n"		
+		"color = vec4(ourColor.x-flexColor.x, ourColor.y+flexColor.y, ourColor.z-flexColor.z,1.0f);}\0";
+
+
+	const GLchar* gradientUniformVertexShader = "#version 330 core\n"
+		"layout (location = 0) in vec3 position;\n"
+		"layout (location = 1) in vec3 color;\n"
+		"out vec3 ourColor;\n"
+		"void main(){\n"
+		"gl_Position = vec4(position, 1.0);\n"
+		"ourColor = color;}\0";
+	const GLchar* gradientUniformFragmentShader = "#version 330 core\n"		
+		"out vec4 color;\n"
+		"uniform vec3 flexColor;\n"
+		"void main(){\n"		
+		"color = vec4(flexColor, 1.0f);}\0";
 };
 

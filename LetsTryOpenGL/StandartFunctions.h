@@ -57,4 +57,5 @@ void CheckSuccessfulProgramCompilation(GLuint* shaderProgram);
 	/// <param name="VAO"></param>
 	/// <param name="VBO"></param>
 void GenerationFigure(GLfloat verticesFirst[], int size_vertices, GLuint VAO, GLuint VBO);
+void UpdateFigure(GLfloat verticesFirst[], int size_vertices, GLuint VAO, GLuint VBO);
 

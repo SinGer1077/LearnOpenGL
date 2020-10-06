@@ -11,7 +11,7 @@
 #include "Shaders.h"
 #include "StandartFunctions.h"
 
-int main()
+int main_zz()
 {
 	glfwInit();
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
@@ -40,11 +40,11 @@ int main()
 
 	Shaders shaders;
 	GLuint vertexShader;
-	CompileVertexShader(&vertexShader, shaders.vertexShaderLecture);
+	CompileVertexShader(&vertexShader, shaders.gradientVertexShader);
 	CheckSuccessfulShaderCompilation(&vertexShader, "vertexShader");
 
 	GLuint fragmentShader;
-	CompileFragmentShader(&fragmentShader, shaders.fragmentTestUniformShader);
+	CompileFragmentShader(&fragmentShader, shaders.gradientFragmentShader);
 	CheckSuccessfulShaderCompilation(&fragmentShader, "fragmentShader");
 
 	GLuint shaderProgram;
@@ -52,9 +52,10 @@ int main()
 	CheckSuccessfulProgramCompilation(&shaderProgram);
 
 	GLfloat verticesFirst[] = {
-		0.0f, 0.5f, 0.0f,
-		0.5f, -0.5f, 0.0f,
-		-0.5f, -0.5f, 0.0f
+		// позиции             //цвета
+		0.0f, 0.5f, 0.0f, 1.0f, 0.0f, 0.0f, //верхний угол
+		0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f, //нижний правый угол
+		-0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f //нижний левый угол
 	};
 
 
@@ -64,7 +65,7 @@ int main()
 	glGenVertexArrays(1, &VAO);
 	glGenBuffers(1, &VBO);
 
-	GenerationFigure(verticesFirst, sizeof(verticesFirst), VAO, VBO);
+	UpdateFigure(verticesFirst, sizeof(verticesFirst), VAO, VBO);
 
 	while (!glfwWindowShouldClose(window)) {
 
@@ -72,11 +73,11 @@ int main()
 		glClearColor(0.2f, 0.3f, 0.5f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
 
-		GLfloat timeValue = glfwGetTime(); // получаем текущее время
-		GLfloat greenValue = (sin(timeValue) / 2) + 0.5; //как будем менять зеленый цвет в зависимости от времени
-		GLint vertexColorLocation = glGetUniformLocation(shaderProgram, "outColor"); //куда передаем (?)
+		//GLfloat timeValue = glfwGetTime(); // получаем текущее время
+		//GLfloat greenValue = (sin(timeValue) / 2) + 0.5; //как будем менять зеленый цвет в зависимости от времени
+		//GLint vertexColorLocation = glGetUniformLocation(shaderProgram, "outColor"); //куда передаем (?)
 		glUseProgram(shaderProgram);
-		glUniform4f(vertexColorLocation, 0.0f, greenValue, 0.0f, 1.0f);
+		//glUniform4f(vertexColorLocation, 0.0f, greenValue, 0.0f, 1.0f);
 
 		glBindVertexArray(VAO);
 		glDrawArrays(GL_TRIANGLES, 0, 3);
