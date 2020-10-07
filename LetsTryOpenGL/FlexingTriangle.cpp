@@ -11,7 +11,7 @@
 #include "Shaders.h"
 #include "StandartFunctions.h"
 
-int main()
+int main_vv()
 {
 	glfwInit();
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);

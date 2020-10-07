@@ -81,7 +81,7 @@ void CheckSuccessfulProgramCompilation(GLuint* shaderProgram) {
 	glGetProgramiv(*shaderProgram, GL_LINK_STATUS, &success);
 	if (!success) {
 		glGetProgramInfoLog(*shaderProgram, 512, NULL, infoLog);
-		std::cout << "Failed to link program" << std::endl;
+		std::cout << "ERROR::SHADER::" << "PROGRAM" << "::COMPILATION_FAILED\n" << infoLog << std::endl;
 	}
 }
 /// <summary>
@@ -100,6 +100,35 @@ void GenerationFigure(GLfloat verticesFirst[], int size_vertices, GLuint VAO, GL
 	glEnableVertexAttribArray(0);
 	glBindVertexArray(0);
 	//glBindBuffer(GL_ARRAY_BUFFER, 0);
+}
+void GenerationEBOFigure(GLfloat verticesFirst[], int size_vertices,GLuint indices[], int size_indices, GLuint VAO, GLuint VBO, GLuint EBO) {
+	glBindVertexArray(VAO);
+	glBindBuffer(GL_ARRAY_BUFFER, VBO);
+	glBufferData(GL_ARRAY_BUFFER, size_vertices, verticesFirst, GL_STATIC_DRAW);
+	std::cout << size_vertices << " " << verticesFirst << std::endl;
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (GLvoid*)0);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, size_indices, indices, GL_STATIC_DRAW);
+	std::cout << size_indices << " " << indices;
+	glEnableVertexAttribArray(0);
+	glBindVertexArray(0);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+}
+void GenerationTextureEBOFigure(GLfloat verticesFirst[], int size_vertices, GLuint indices[], int size_indices, GLuint VAO, GLuint VBO, GLuint EBO) {
+	glBindVertexArray(VAO);
+	glBindBuffer(GL_ARRAY_BUFFER, VBO);
+	glBufferData(GL_ARRAY_BUFFER, size_vertices, verticesFirst, GL_STATIC_DRAW);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, size_indices, indices, GL_STATIC_DRAW);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (GLvoid*)0);
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (GLvoid*)(3 * sizeof(GLfloat)));
+	glEnableVertexAttribArray(1);
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (GLvoid*)(6 * sizeof(GLfloat)));	
+	glEnableVertexAttribArray(2);
+	glBindVertexArray(0);
+	//glBindBuffer(GL_ARRAY_BUFFER, 0);
+
 }
 void UpdateFigure(GLfloat verticesFirst[], int size_vertices, GLuint VAO, GLuint VBO) {
 	glBindVertexArray(VAO);

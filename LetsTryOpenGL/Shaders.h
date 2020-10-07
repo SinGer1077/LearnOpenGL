@@ -41,8 +41,10 @@ public:
 
 	const GLchar* vertexShaderLecture = "#version 330 core\n"
 		"layout (location=0) in vec3 position;\n"
+		"out vec4 vertexColor;\n"
 		"void main(){\n"
-		"gl_Position = vec4(position, 1.0);\n"
+		"gl_Position = vec4(position, 1.0);\n"		
+		"vertexColor = vec4(1.0f, 0.4f, 0.3f, 1.0f);\n"
 		"}\0";
 
 	const GLchar* fragmentShaderLecture = "#version 330 core\n"
@@ -71,7 +73,7 @@ public:
 		"uniform vec3 flexColor;\n"
 		"out vec4 color;\n"		
 		"void main(){\n"		
-		"color = vec4(ourColor.x-flexColor.x, ourColor.y+flexColor.y, ourColor.z-flexColor.z,1.0f);}\0";
+		"color = vec4(ourColor.x+flexColor.x, ourColor.y+flexColor.y, ourColor.z+flexColor.z,1.0f);}\0";
 	
 
 	const GLchar* gradientVertexRotateShader = "#version 330 core\n"
@@ -104,6 +106,24 @@ public:
 		"void main(){\n"
 		"color = vec4(trPosition);}\0";
 
+
+	const GLchar* textureVertexShader = "#version 330 core\n"
+		"layout (location = 0) in vec3 position;\n"
+		"layout (location = 1) in vec3 color;\n"
+		"layout (location = 2) in vec2 texCoord;\n"
+		"out vec3 ourColor;\n"
+		"out vec2 TexCoord;\n"
+		"void main(){\n"
+		"gl_Position = vec4(position, 1.0f);\n"
+		"ourColor = color;\n"
+		"TexCoord = texCoord;}\n";
+	const GLchar* textureFragmentShader = "#version 330 core\n"
+		"in vec3 ourColor;\n"		
+		"in vec2 TexCoord;\n"
+		"out vec4 color;\n"
+		"uniform sampler2D ourTexture;\n"
+		"void main(){\n"			
+		"color = texture(ourTexture, TexCoord) *vec4(ourColor, 1.0f);}\n";
 	
 };
 

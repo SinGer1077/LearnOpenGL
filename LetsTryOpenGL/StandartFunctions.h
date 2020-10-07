@@ -57,5 +57,24 @@ void CheckSuccessfulProgramCompilation(GLuint* shaderProgram);
 	/// <param name="VAO"></param>
 	/// <param name="VBO"></param>
 void GenerationFigure(GLfloat verticesFirst[], int size_vertices, GLuint VAO, GLuint VBO);
+/// <summary>
+/// Генерация буфера с множеством точек
+/// </summary>
+/// <param name="verticesFirst"></param>
+/// <param name="size_vertices"></param>
+/// <param name="indices"></param>
+/// <param name="size_indices"></param>
+/// <param name="VAO"></param>
+/// <param name="VBO"></param>
+/// <param name="EBO"></param>
+void GenerationEBOFigure(GLfloat verticesFirst[], int size_vertices, GLuint indices[], int size_indices, GLuint VAO, GLuint VBO, GLuint EBO);
+void GenerationTextureEBOFigure(GLfloat verticesFirst[], int size_vertices, GLuint indices[], int size_indices, GLuint VAO, GLuint VBO, GLuint EBO);
+/// <summary>
+/// Генерация с изменением цвета
+/// </summary>
+/// <param name="verticesFirst"></param>
+/// <param name="size_vertices"></param>
+/// <param name="VAO"></param>
+/// <param name="VBO"></param>
 void UpdateFigure(GLfloat verticesFirst[], int size_vertices, GLuint VAO, GLuint VBO);
 
