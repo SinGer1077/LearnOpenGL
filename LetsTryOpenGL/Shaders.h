@@ -123,8 +123,9 @@ public:
 		"out vec4 color;\n"
 		"uniform sampler2D ourTexture1;\n"
 		"uniform sampler2D ourTexture2;\n"
+		"uniform float mixCoef;\n"
 		"void main(){\n"					
-		"color = mix(texture(ourTexture1, TexCoord)* vec4(ourColor, 1.0f), texture(ourTexture2, vec2(1.0f-TexCoord.x,TexCoord.y)) ,0.5);}\n";
+		"color = mix(texture(ourTexture1, TexCoord)* vec4(ourColor, 1.0f), texture(ourTexture2, vec2(1.0f-TexCoord.x,TexCoord.y)) , mixCoef);}\n";
 	
 };
 

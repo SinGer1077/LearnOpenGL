@@ -11,7 +11,8 @@
 
 #include "Shaders.h"
 #include "StandartFunctions.h"
-
+void key_callback_regulate_texture(GLFWwindow* window, int key, int scancode, int action, int mode);
+float mixCoef;
 
 int main() {
 
@@ -80,8 +81,8 @@ int main() {
 	GLuint texture1;
 	glGenTextures(1, &texture1); //генерация идентификатора текстуры
 	glBindTexture(GL_TEXTURE_2D, texture1); //привязка текстуры
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, texWidth, texHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, image); //генерация текстуры
@@ -104,7 +105,7 @@ int main() {
 	glGenTextures(1, &texture2); //генерация идентификатора текстуры
 	glBindTexture(GL_TEXTURE_2D, texture2); //привязка текстуры
 	float borderColor[] = { 1.0f, 1.0f, 0.0f, 1.0f };
-	glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -120,7 +121,7 @@ int main() {
 	//9 - само изображение
 	SOIL_free_image_data(image); //освобождаем память от изображения
 	glBindTexture(GL_TEXTURE_2D, 0); //отвязываем объект текстуры
-
+	glfwSetKeyCallback(window, key_callback_regulate_texture);
 	while (!glfwWindowShouldClose(window)) {
 
 		glfwPollEvents();
@@ -133,8 +134,9 @@ int main() {
 		glUniform1i(glGetUniformLocation(shaderProgram, "ourTexture1"), 0);
 		glActiveTexture(GL_TEXTURE1);
 		glBindTexture(GL_TEXTURE_2D, texture2);
-		glUniform1i(glGetUniformLocation(shaderProgram, "ourTexture2"), 1);
+		glUniform1i(glGetUniformLocation(shaderProgram, "ourTexture2"), 1);		
 		 
+		glUniform1f(glGetUniformLocation(shaderProgram, "mixCoef"), mixCoef);
 		glBindVertexArray(VAO);
 		//glDrawArrays(GL_TRIANGLES, 0, 3);	
 		
@@ -150,4 +152,17 @@ int main() {
 	glfwTerminate();
 
 	return 0;
+}
+
+void key_callback_regulate_texture(GLFWwindow* window, int key, int scancode, int action, int mode) {
+	if (key == GLFW_KEY_UP && action == GLFW_PRESS) {
+		if (mixCoef < 1.0f)
+			mixCoef += 0.1f;
+	}
+	if (key == GLFW_KEY_DOWN && action == GLFW_PRESS) {
+		if (mixCoef > 0.0f)
+			mixCoef -= 0.1f;
+	}
+	if(key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
+		glfwSetWindowShouldClose(window, GL_TRUE);
 }
