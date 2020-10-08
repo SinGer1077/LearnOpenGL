@@ -116,14 +116,15 @@ public:
 		"void main(){\n"
 		"gl_Position = vec4(position, 1.0f);\n"
 		"ourColor = color;\n"
-		"TexCoord = texCoord;}\n";
+		"TexCoord = vec2(texCoord.x, 1.0f-texCoord.y);}\n";
 	const GLchar* textureFragmentShader = "#version 330 core\n"
 		"in vec3 ourColor;\n"		
 		"in vec2 TexCoord;\n"
 		"out vec4 color;\n"
-		"uniform sampler2D ourTexture;\n"
-		"void main(){\n"			
-		"color = texture(ourTexture, TexCoord) *vec4(ourColor, 1.0f);}\n";
+		"uniform sampler2D ourTexture1;\n"
+		"uniform sampler2D ourTexture2;\n"
+		"void main(){\n"					
+		"color = mix(texture(ourTexture1, TexCoord)* vec4(ourColor, 1.0f), texture(ourTexture2, vec2(1.0f-TexCoord.x,TexCoord.y)) ,0.5);}\n";
 	
 };
 
