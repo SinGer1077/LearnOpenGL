@@ -3,6 +3,9 @@
 #include <glew.h>
 #include <glfw3.h>
 #include <SOIL.h>
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 #include <iostream>
 #include <chrono>
@@ -121,13 +124,20 @@ int main() {
 	//9 - само изображение
 	SOIL_free_image_data(image); //освобождаем память от изображения
 	glBindTexture(GL_TEXTURE_2D, 0); //отвязываем объект текстуры
-	glfwSetKeyCallback(window, key_callback_regulate_texture);
+	glfwSetKeyCallback(window, key_callback_regulate_texture);	
+	
 	while (!glfwWindowShouldClose(window)) {
 
 		glfwPollEvents();
 		glClearColor(0.2f, 0.3f, 0.5f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
 		glUseProgram(shaderProgram);
+
+		glm::mat4 trans = glm::mat4(1.0f);
+		trans = glm::rotate(trans, glm::radians((GLfloat)glfwGetTime()*50.0f), glm::vec3(1.0, 1.0, 1.0));
+		trans = glm::translate(trans, glm::vec3(0.5f, -0.5f, 0.0f));
+		GLuint transformLoc = glGetUniformLocation(shaderProgram, "transform");
+		glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(trans));
 
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, texture1);
@@ -138,9 +148,19 @@ int main() {
 		 
 		glUniform1f(glGetUniformLocation(shaderProgram, "mixCoef"), mixCoef);
 		glBindVertexArray(VAO);
-		//glDrawArrays(GL_TRIANGLES, 0, 3);	
-		
+		//glDrawArrays(GL_TRIANGLES, 0, 3);			
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+
+		glm::mat4 trans1 = glm::mat4(1.0f);
+		trans1 = glm::translate(trans1, glm::vec3(0.5f, -0.5f, 0.0f));
+		trans1 = glm::scale(trans1, glm::vec3(sin((GLfloat)glfwGetTime())/2, sin((GLfloat)glfwGetTime())/2, 1.0f));
+		
+		GLuint transformLoc1 = glGetUniformLocation(shaderProgram, "transform");
+		glUniformMatrix4fv(transformLoc1, 1, GL_FALSE, glm::value_ptr(trans1));		
+		
+		//glDrawArrays(GL_TRIANGLES, 0, 3);			
+		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+
 
 		glBindVertexArray(0);
 
