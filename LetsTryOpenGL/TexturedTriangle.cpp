@@ -12,7 +12,7 @@
 #include <cmath>
 #include <string>
 
-#include "Shaders.h"
+#include "Shaders.cpp"
 #include "StandartFunctions.h"
 void key_callback_regulate_texture(GLFWwindow* window, int key, int scancode, int action, int mode);
 float mixCoef;
@@ -44,8 +44,8 @@ int main() {
 	glViewport(0, 0, width, height);
 	glfwSetKeyCallback(window, key_callback_escape);
 
-	Shaders shaders;
-	GLuint vertexShader;
+	Shader ourShader("Shaders//vertexTexture.txt", "Shaders//fragmentTexture.txt");
+	/*GLuint vertexShader;
 	CompileVertexShader(&vertexShader, shaders.textureVertexShader);
 	CheckSuccessfulShaderCompilation(&vertexShader, "vertexShader");
 
@@ -55,7 +55,7 @@ int main() {
 
 	GLuint shaderProgram;
 	CompileShaderProgram(&shaderProgram, &vertexShader, &fragmentShader);
-	CheckSuccessfulProgramCompilation(&shaderProgram);
+	CheckSuccessfulProgramCompilation(&shaderProgram);*/
 
 	GLfloat vertices[] = {
 		 0.5f,  0.5f, 0.0f,   1.0f, 0.0f, 0.0f,   1.0f, 1.0f, //â ï
@@ -131,31 +131,34 @@ int main() {
 		glfwPollEvents();
 		glClearColor(0.2f, 0.3f, 0.5f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
-		glUseProgram(shaderProgram);
+		ourShader.Use();
+		//glUseProgram(shaderProgram);
 
 		glm::mat4 trans = glm::mat4(1.0f);
 		trans = glm::rotate(trans, glm::radians((GLfloat)glfwGetTime()*50.0f), glm::vec3(1.0, 1.0, 1.0));
 		trans = glm::translate(trans, glm::vec3(0.5f, -0.5f, 0.0f));
-		GLuint transformLoc = glGetUniformLocation(shaderProgram, "transform");
+		GLuint transformLoc = glGetUniformLocation(ourShader.Program, "transform");
 		glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(trans));
 
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, texture1);
-		glUniform1i(glGetUniformLocation(shaderProgram, "ourTexture1"), 0);
+		glUniform1i(glGetUniformLocation(ourShader.Program, "ourTexture1"), 0);
 		glActiveTexture(GL_TEXTURE1);
 		glBindTexture(GL_TEXTURE_2D, texture2);
-		glUniform1i(glGetUniformLocation(shaderProgram, "ourTexture2"), 1);		
+		glUniform1i(glGetUniformLocation(ourShader.Program, "ourTexture2"), 1);		
 		 
-		glUniform1f(glGetUniformLocation(shaderProgram, "mixCoef"), mixCoef);
+		glUniform1f(glGetUniformLocation(ourShader.Program, "mixCoef"), mixCoef);
 		glBindVertexArray(VAO);
 		//glDrawArrays(GL_TRIANGLES, 0, 3);			
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
 		glm::mat4 trans1 = glm::mat4(1.0f);
+		trans1 = glm::scale(trans1, glm::vec3(sin((GLfloat)glfwGetTime()) / 2, sin((GLfloat)glfwGetTime()) / 2, 1.0f));
 		trans1 = glm::translate(trans1, glm::vec3(0.5f, -0.5f, 0.0f));
-		trans1 = glm::scale(trans1, glm::vec3(sin((GLfloat)glfwGetTime())/2, sin((GLfloat)glfwGetTime())/2, 1.0f));
-		
-		GLuint transformLoc1 = glGetUniformLocation(shaderProgram, "transform");
+
+		//trans1 = glm::scale(trans1, glm::vec3(sin((GLfloat)glfwGetTime())/2, sin((GLfloat)glfwGetTime())/2, 1.0f));
+		//
+		GLuint transformLoc1 = glGetUniformLocation(ourShader.Program, "transform");
 		glUniformMatrix4fv(transformLoc1, 1, GL_FALSE, glm::value_ptr(trans1));		
 		
 		//glDrawArrays(GL_TRIANGLES, 0, 3);			
